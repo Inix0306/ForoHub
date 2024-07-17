@@ -1,51 +1,79 @@
-# Convertidor de Tasa de Cambio de Moneda
+# API REST para Foro usando Spring Boot
 
-Este programa en Java utiliza la API de "Exchange Rate API" para obtener y mostrar la tasa de cambio entre dos monedas especificadas por el usuario. Utiliza la biblioteca Jackson para manejar las respuestas en formato JSON y `HttpURLConnection` para realizar solicitudes HTTP al endpoint de la API.
+Este proyecto implementa una API REST para un foro utilizando Spring Boot. Permite la gestión de tópicos, incluyendo la creación, listado y eliminación, con seguridad implementada mediante JWT (JSON Web Token).
 
-## Características
+## Tecnologías Utilizadas
 
-- **Entrada de Usuario**: Permite al usuario ingresar la moneda base y la moneda objetivo para la conversión.
-- **Salida Dinámica**: Muestra la tasa de cambio actualizada de la moneda base a la moneda objetivo basada en los datos más recientes obtenidos de la API.
-- **Manejo de Errores**: Gestiona posibles errores como problemas de conexión HTTP y errores devueltos por la API.
+- Java 11
+- Spring Boot 2.5.5
+- Spring Data JPA
+- Spring Security con JWT
+- PostgreSQL
+- Maven
 
-## Uso
+## Configuración del Proyecto
 
-1. **Configuración**
-   - Asegúrate de tener Java instalado en tu sistema.
-   - Agrega la dependencia de la biblioteca Jackson (`jackson-databind`) al archivo `pom.xml` de tu proyecto si aún no está incluida:
+1. **Configuración de la Base de Datos**
 
-     ```xml
-     <dependency>
-         <groupId>com.fasterxml.jackson.core</groupId>
-         <artifactId>jackson-databind</artifactId>
-         <version>2.13.1</version>
-     </dependency>
-     ```
+   Asegúrate de tener PostgreSQL instalado y configurado. Luego, modifica el archivo `application.properties` ubicado en `src/main/resources` con tus credenciales de base de datos:
 
-2. **Ejecución**
-   - Ejecuta el archivo `Main.java`.
-   - Sigue las indicaciones para ingresar la moneda base (`DE:`) y la moneda objetivo (`A:`).
-   - El programa obtendrá las tasas de cambio más recientes de la API y mostrará la tasa de conversión de la moneda base a la moneda objetivo.
+   ```properties
+   spring.datasource.url=jdbc:postgresql://localhost:5432/forum_db
+   spring.datasource.username=your_username
+   spring.datasource.password=your_password
+   spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+   spring.jpa.hibernate.ddl-auto=update
+   
+2. **Ejecución del Proyecto**
 
-## Ejemplo
-Ingrese la moneda base
-DE: USD
-Ingrese la moneda objetivo
-A: EUR
-Tasa de cambio de USD a EUR:
-1 USD = 0.85 EUR
+Clona este repositorio y ejecuta el proyecto utilizando Maven:
+mvn spring-boot:run
 
-## Notas
+El servidor se ejecutará en http://localhost:8080.
 
-- Asegúrate de tener una conexión a internet estable para obtener datos de la API.
-- Reemplaza `67af2377ae42c78a06ce9b20` con tu clave API obtenida de "Exchange Rate API" para el correcto funcionamiento.
-- Monitorea la consola en busca de mensajes de error en caso de problemas durante el manejo de la solicitud a la API.
+## Endpoints Disponibles
 
-## Dependencias
+Listar Todos los Tópicos
+  URL: /api/topics
+  Método HTTP: GET
+  Descripción: Retorna todos los tópicos existentes en el foro.
+  
+## Crear un Nuevo Tópico
 
-- Java 8 o superior
-- Biblioteca Jackson JSON (`jackson-databind`)
+  URL: /api/topics
+  Método HTTP: POST
+  Descripción: Crea un nuevo tópico en el foro.
+  Body: Debe contener un JSON con los datos del tópico a crear
+  {
+  "title": "Título del Tópico",
+  "message": "Mensaje del Tópico",
+  "course": "Curso Relacionado",
+  "userId": 1
+}
+      title: Título del tópico.
+      message: Mensaje o contenido del tópico.
+      course: Curso relacionado con el tópico.
+      userId: ID del usuario que crea el tópico.
+      
+## Eliminar un Tópico
 
-## Licencia
+URL: /api/topics/{id}
+Método HTTP: DELETE
+Descripción: Elimina el tópico con el ID especificado.
+Parámetros de la URL: {id} - ID del tópico a eliminar.
 
-Este proyecto está bajo la Licencia MIT - consulta el archivo LICENSE para más detalles.
+## Seguridad con JWT
+La seguridad está implementada utilizando JSON Web Tokens (JWT). Para crear y validar tokens JWT, se utilizan las siguientes clases:
+
+   JwtTokenProvider: Clase para la creación, validación y obtención de información del token.
+   JwtConfigurer: Configuración de Spring Security para integrar JWT.
+   
+## Prueba con Insomnia
+Se recomienda usar Insomnia o una herramienta similar para probar los endpoints de la API REST. Aquí está cómo configurar Insomnia para trabajar con esta API:
+
+      1.Crear un Nuevo Request: Crea un nuevo request para cada uno de los endpoints descritos.
+      2.Configurar Headers: Agrega un header Content-Type con valor application/json para las peticiones POST y DELETE.
+      3.Enviar Peticiones: Envía peticiones a los endpoints para probar la funcionalidad.
+
+
+Este README proporciona una guía estructurada para configurar, ejecutar, probar y comprender el proyecto de API REST para un foro usando Spring Boot. Asegúrate de ajustar los detalles específicos según tu implementación y agregar más secciones o información según sea necesario.
